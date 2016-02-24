@@ -1,9 +1,10 @@
 #include<iostream>
+#include<cstdio>
 #include<cstring>
 #define lowbit(i) (i&(-i))
 using namespace std;
-const int maxn=1e5+5;
-int bit[maxn];
+const int maxn=32005;
+int bit[maxn],ans[maxn],n;
 int query(int i)
 {
 	int s=0;
@@ -14,6 +15,7 @@ int query(int i)
 	}
 	return s;
 }
+
 void add(int i,int x)
 {
 	while(i<=maxn)
@@ -22,22 +24,22 @@ void add(int i,int x)
 		i+=lowbit(i);
 	}
 }
+
 int main(){
-	int n;
-	while(~scanf("%d",&n) && n)
-	{
+	while(cin>>n)
+	{	
 		memset(bit,0,sizeof(bit));
+		memset(ans,0,sizeof(ans));
 		for(int i=1;i<=n;i++){
-			int l,r;
-			scanf("%d%d",&l,&r);
-			add(l,1);
-			add(r+1,-1);
-		}
-		printf("%d",query(1));
-		for(int i=2;i<=n;i++){
-			printf(" %d",query(i));
-		}
-		putchar('\n');
+			int x,y;
+			scanf("%d%d",&x,&y);
+			x++;			
+			ans[query(x)]++;
+			add(x,1);
+		}			
+		for(int i=0;i<n;i++)
+			printf("%d\n",ans[i]);
 	}
+
 	return 0;
 }
