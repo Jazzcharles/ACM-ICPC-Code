@@ -1,0 +1,114 @@
+ C++代码: poj 2761 线段树 询问 求区间的第k大数 单点更新和删除 二分 离线处理
+001 poj 2761 询问 求区间的第k大数
+002 线段树 单点更新和删除 离线处理
+003 复杂度 n * log(n) * log(n)
+004 用到了 二分
+005
+006 #include<map>
+007 #include<set>
+008 #include<cmath>
+009 #include<queue>
+010 #include<stack>
+011 #include<cstdio>
+012 #include<vector>
+013 #include<string>
+014 #include<cstring>
+015 #include<iostream>
+016 #include<algorithm>
+017 const double pi = acos(-1.0);
+018 using namespace std;
+019 #define LL(x) (x << 1)
+020 #define RR(x) (x << 1 | 1)
+021 const int maxn = 100008;
+022 int  a[maxn], b[maxn], c[maxn], n, p[maxn], ans[maxn / 2];
+023 int  sum[maxn << 2];
+024 bool cmp(const int &i, const int &j){
+025       return a[i] < a[j] || a[i] == a[j] && i < j;
+026 }
+027 struct node{
+028       int a, b, id, k;
+029       bool operator < (const node & B)const{
+030            return a < B.a;
+031       }
+032 }q[maxn / 2];
+033
+034 void build(int id, int l, int r){
+035       sum[id] = 0;
+036       if(l == r) return ;
+037       int mid = (l + r) >> 1;
+038       build(LL(id), l, mid);
+039       build(RR(id), mid + 1, r);
+040 }
+041 void update(int id, int l, int r, int pos, int add){
+042       if(l == r){
+043             sum[id] += add; return;
+044       }
+045       int mid = (l + r) >> 1;
+046       if(pos <= mid) update(LL(id), l, mid, pos, add);
+047       else update(RR(id), mid + 1, r, pos, add);
+048       sum[id] = sum[LL(id)] + sum[RR(id)];
+049 }
+050 int query(int id, int l, int r, int ul, int ur){
+051       if(ul <= l && ur >= r){
+052            return sum[id];
+053       }
+054       int mid = (l + r) >> 1;
+055       int ret = 0;
+056       if(ur <= mid) ret += query(LL(id), l, mid, ul, ur);
+057       else if(ul > mid) ret += query(RR(id), mid + 1, r, ul, ur);
+058       else {
+059             ret += query(LL(id), l, mid, ul, ur);
+060             ret += query(RR(id), mid + 1, r, ul, ur);
+061       }
+062       return ret;
+063 }
+064 int find(int s){
+065       int l = 1, r = n, ans = -1;
+066       while(l <= r){
+067             int mid = (l + r) >> 1;
+068             if(query(1, 1, n, 1, mid) >= s){
+069                   ans = mid;
+070                   r = mid - 1;
+071             }else l = mid + 1;
+072       }
+073       return p[ans];
+074 }
+075 int main(){
+076        //freopen("poj 2761.in","r",stdin);
+077        int  m;
+078        while(scanf("%d%d",&n,&m)!=EOF){
+079              build(1, 1, n);
+080              for(int i = 1; i <= n; i++) scanf("%d", a + i);
+081              for(int i = 1; i <= n; i++) b[i] = i;
+082              sort(b + 1, b + n + 1, cmp);
+083              for(int i = 1; i <= n; i++) c[b[i]] = i, p[i] = a[b[i]];
+084              for(int i = 1; i <= m; i++){
+085                   scanf("%d%d%d",&q[i].a,&q[i].b,&q[i].k);
+086                   q[i].id = i;
+087                   if(q[i].a > q[i].b) swap(q[i].a, q[i].b);
+088              }
+089              sort(q + 1, q + m + 1);
+090              int low = 1, high = 0;
+091              for(int i = 1; i <= m; i++){
+092                   int st = q[i].a, ed = q[i].b;
+093                   while(high < ed){
+094                         high++;
+095                         update(1, 1, n, c[high], 1);
+096                   }
+097                   while(low < st){
+098                         update(1, 1, n, c[low], -1);
+099                         low++;
+100                   }
+101                   ans[q[i].id] = find(q[i].k);
+102              }
+103              for(int i = 1; i <= m; i++){
+104                    printf("%d\n", ans[i]);
+105              }
+106        }
+107 }
+108 /*
+109 7 2
+110 1 5 2 6 3 7 4
+111 1 5 3
+112 2 7 1
+113 */
