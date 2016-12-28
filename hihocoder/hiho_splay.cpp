@@ -282,10 +282,8 @@ int main(){
 			a[1]=num;
 			int r=add(num);	
 		//	debug();
-		//	cout<<loc<<endl;
 			int pre=seekpre(r);
 			int aft=seekafter(r);
-		//	cout<<aft<<endl;
 			if(flag) printf("%d\n",num);	
 			else {
 				printf("%d\n",ts[pre].val);	
