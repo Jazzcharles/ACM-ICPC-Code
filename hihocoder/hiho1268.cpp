@@ -1,0 +1,43 @@
+#include<bits/stdc++.h>
+using namespace std;
+int a[10],ans[10];
+int Hash[8][9]={
+	2,7,6,9,5,1,4,3,8,
+	2,9,4,7,5,3,6,1,8,
+	6,7,2,1,5,9,8,3,4,
+	6,1,8,7,5,3,2,9,4,
+	8,1,6,3,5,7,4,9,2,
+	8,3,4,1,5,9,6,7,2,
+	4,3,8,9,5,1,2,7,6,
+	4,9,2,3,5,7,8,1,6,
+};
+bool check(int t[10]){
+	for(int i=0;i<9;i++){
+		if(a[i] && a[i]!=t[i]) return 0;
+	}
+	return 1;
+}
+int main(){
+	for(int i=0;i<9;i++) cin>>a[i];
+	int ct=0,res=0;
+	for(int i=0;i<8;i++){
+		if(check(Hash[i])) {
+			memcpy(ans,Hash[i],sizeof(ans));
+			//cout<<i<<endl;
+			ct++;	
+		}
+	}
+	if(ct>1) puts("Too Many");
+	else{
+		for(int i=0;i<9;i++){
+			if(i==2 || i==5 || i==8) printf("%d\n",ans[i]);
+			else printf("%d ",ans[i]); 
+		}
+	}
+	return 0;
+} 
+/*
+0 7 2
+0 5 0
+0 3 0
+*/
